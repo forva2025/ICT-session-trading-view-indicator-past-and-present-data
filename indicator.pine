@@ -1,0 +1,136 @@
+//@version=5
+indicator("ICT Session Boxes Historical and present data (NY Time)-Elias' version", overlay=true)
+
+// --- Session definitions ---
+asianSess    = input.session("2000-0000", "Asian Session")
+londonSess   = input.session("0200-0500", "London Session")
+nyAM_Sess    = input.session("0930-1100", "NY AM")
+nyLunch_Sess = input.session("1200-1300", "NY Lunch")
+nyPM_Sess    = input.session("1330-1600", "NY PM")
+
+// --- Session visibility ---
+showAsian   = input.bool(true, "Show Asian")
+showLondon  = input.bool(true, "Show London")
+showNYAM    = input.bool(true, "Show NY AM")
+showNYLunch = input.bool(true, "Show NY Lunch")
+showNYPM    = input.bool(true, "Show NY PM")
+
+// --- Box transparency ---
+alpha = input.int(85, "Transparency", 0, 100)
+
+// --- Colors ---
+asianCol    = color.new(color.blue, alpha)
+londonCol   = color.new(color.green, alpha)
+nyAMCol     = color.new(color.red, alpha)
+nyLunchCol  = color.new(color.orange, alpha)
+nyPMCol     = color.new(color.purple, alpha)
+
+// --- Persistent variables ---
+var int startAsianBar     = na
+var float highAsian       = na
+var float lowAsian        = na
+
+var int startLondonBar    = na
+var float highLondon      = na
+var float lowLondon       = na
+
+var int startNYAMBar      = na
+var float highNYAM        = na
+var float lowNYAM         = na
+
+var int startNYLunchBar   = na
+var float highNYLunch     = na
+var float lowNYLunch      = na
+
+var int startNYPMBar      = na
+var float highNYPM        = na
+var float lowNYPM         = na
+
+// --- Function to create a session box ---
+f_create_session_box(_start, _high, _low, _col, _text) =>
+    if not na(_start)
+        b = box.new(left=_start, top=_high, right=bar_index-1, bottom=_low, xloc=xloc.bar_index, bgcolor=_col, border_color=_col)
+        box.set_text(b, _text)
+
+// --- Session checks ---
+inAsian      = showAsian   and not na(time(timeframe.period, asianSess, "America/New_York"))
+inLondon     = showLondon  and not na(time(timeframe.period, londonSess, "America/New_York"))
+inNYAM       = showNYAM    and not na(time(timeframe.period, nyAM_Sess, "America/New_York"))
+inNYLunch    = showNYLunch and not na(time(timeframe.period, nyLunch_Sess, "America/New_York"))
+inNYPM       = showNYPM    and not na(time(timeframe.period, nyPM_Sess, "America/New_York"))
+
+// --- Session handling ---
+if inAsian
+    if na(startAsianBar)
+        startAsianBar := bar_index
+        highAsian := high
+        lowAsian := low
+    else
+        highAsian := math.max(highAsian, high)
+        lowAsian := math.min(lowAsian, low)
+else
+    if not na(startAsianBar)
+        f_create_session_box(startAsianBar, highAsian, lowAsian, asianCol, "ASIA")
+        startAsianBar := na
+        highAsian := na
+        lowAsian := na
+
+if inLondon
+    if na(startLondonBar)
+        startLondonBar := bar_index
+        highLondon := high
+        lowLondon := low
+    else
+        highLondon := math.max(highLondon, high)
+        lowLondon := math.min(lowLondon, low)
+else
+    if not na(startLondonBar)
+        f_create_session_box(startLondonBar, highLondon, lowLondon, londonCol, "LONDON")
+        startLondonBar := na
+        highLondon := na
+        lowLondon := na
+
+if inNYAM
+    if na(startNYAMBar)
+        startNYAMBar := bar_index
+        highNYAM := high
+        lowNYAM := low
+    else
+        highNYAM := math.max(highNYAM, high)
+        lowNYAM := math.min(lowNYAM, low)
+else
+    if not na(startNYAMBar)
+        f_create_session_box(startNYAMBar, highNYAM, lowNYAM, nyAMCol, "NY AM")
+        startNYAMBar := na
+        highNYAM := na
+        lowNYAM := na
+
+if inNYLunch
+    if na(startNYLunchBar)
+        startNYLunchBar := bar_index
+        highNYLunch := high
+        lowNYLunch := low
+    else
+        highNYLunch := math.max(highNYLunch, high)
+        lowNYLunch := math.min(lowNYLunch, low)
+else
+    if not na(startNYLunchBar)
+        f_create_session_box(startNYLunchBar, highNYLunch, lowNYLunch, nyLunchCol, "NY Lunch")
+        startNYLunchBar := na
+        highNYLunch := na
+        lowNYLunch := na
+
+if inNYPM
+    if na(startNYPMBar)
+        startNYPMBar := bar_index
+        highNYPM := high
+        lowNYPM := low
+    else
+        highNYPM := math.max(highNYPM, high)
+        lowNYPM := math.min(lowNYPM, low)
+else
+    if not na(startNYPMBar)
+        f_create_session_box(startNYPMBar, highNYPM, lowNYPM, nyPMCol, "NY PM")
+        startNYPMBar := na
+        highNYPM := na
+        lowNYPM := na
