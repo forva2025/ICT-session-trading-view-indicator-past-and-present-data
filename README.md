@@ -1,0 +1,2 @@
+# ICT-session-trading-view-indicator-past-and-present-data
+This TradingView indicator highlights major Forex trading sessions—Asian, London, NY AM, NY Lunch, and NY PM—using colored boxes on the price chart. Each box spans the session’s time and its high-to-low range, persisting historically across days. Users can toggle visibility per session and adjust box transparency. Text labels are overlaid .
